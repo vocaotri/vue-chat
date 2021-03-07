@@ -1,26 +1,30 @@
 <template>
   <v-app>
     <Header />
-    <v-main>
-      <HelloWorld />
-    </v-main>
+    <RightSideBar ref="rightSideBar" />
+    <router-view></router-view>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
 import Header from "./components/partial/Header";
+import RightSideBar from "@/components/partial/RightSideBar";
 
 export default {
   name: "App",
 
   components: {
-    HelloWorld,
     Header,
+    RightSideBar,
   },
 
   data: () => ({
     //
   }),
+  created() {
+    this.$root.$on("show-side-bar", (res) => {
+      this.$refs.rightSideBar.setDrawer(res);
+    });
+  },
 };
 </script>
