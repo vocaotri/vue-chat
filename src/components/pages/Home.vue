@@ -6,7 +6,21 @@
           ><v-list-item-avatar color="grey darken-1"> </v-list-item-avatar>
           name</v-subheader
         >
-        <v-list id="list-chat" two-line height="350px" class="overflow-y-auto">
+        <v-list
+          id="list-chat"
+          two-line
+          height="350px"
+          class="overflow-y-auto"
+          :class="loaddMessage ? 'loading' : ''"
+        >
+          <v-img
+            v-show="loaddMessage"
+            alt="loading message"
+            src="@/assets/gif/loading-message.gif"
+            width="25px"
+            height="25px"
+            class="m-auto"
+          ></v-img>
           <template v-for="(message, index) in messages">
             <v-list-item :key="index">
               <v-list-item-content
@@ -21,6 +35,7 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-avatar
+                v-show="index === messages.length - 1"
                 height="25"
                 width="25"
                 min-width="10"
@@ -78,14 +93,24 @@ export default {
       },
     ],
     message: "",
+    loaddMessage: false,
   }),
   mounted: function () {
     this.scrollToEnd();
     this.scroll();
   },
-  updated: function () {
-    this.scrollToEnd();
+  watch: {
+    messages: {
+      handler: function () {
+        var _this = this;
+        setTimeout(function () {
+          _this.scrollToEnd();
+        });
+      },
+      deep: true,
+    },
   },
+  updated: function () {},
   methods: {
     scrollToEnd: function () {
       var container = this.$el.querySelector("#list-chat");
@@ -94,6 +119,7 @@ export default {
     sendMessage() {
       this.messages.push({ name: "user_name", content: this.message });
       this.message = "";
+      this.scrollToEnd();
     },
     handleScroll: function (e) {
       console.log(e);
@@ -103,14 +129,12 @@ export default {
     },
     scroll() {
       document.getElementById("list-chat").onscroll = () => {
-        // console.log();
-        // let bottomOfWindow =
-        //   document.getElementById("list-chat").scrollTop +
-        //     window.innerHeight ===
-        //   document.getElementById("list-chat").offsetHeight;
-
         if (document.getElementById("list-chat").scrollTop === 0) {
-          alert("ok");
+          this.loaddMessage = true;
+          var _this = this;
+          setTimeout(function () {
+            _this.loaddMessage = false;
+          }, 1000);
         }
       };
     },
@@ -132,5 +156,11 @@ export default {
   bottom: 0;
   padding: inherit;
   margin: auto;
+}
+.m-auto {
+  margin: auto;
+}
+.loading {
+  cursor: progress;
 }
 </style>
