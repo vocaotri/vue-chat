@@ -121,12 +121,6 @@ export default {
       this.message = "";
       this.scrollToEnd();
     },
-    handleScroll: function (e) {
-      console.log(e);
-      if (e.target.scrollHeight - 300 <= e.target.scrollTop) {
-        alert("oi sou Eduardo Martins");
-      }
-    },
     scroll() {
       document.getElementById("list-chat").onscroll = () => {
         if (document.getElementById("list-chat").scrollTop === 0) {
