@@ -1,7 +1,5 @@
 <template>
-  <v-container>
-    <v-row class="text-center">hello word </v-row>
-  </v-container>
+  <v-row class="text-center">hello word </v-row>
 </template>
 
 <script>

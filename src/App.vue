@@ -2,7 +2,11 @@
   <v-app>
     <Header />
     <RightSideBar ref="rightSideBar" />
-    <router-view></router-view>
+    <v-main>
+      <v-container class="py-8 px-6" fluid>
+        <router-view></router-view>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
