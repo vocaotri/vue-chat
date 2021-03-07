@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 export default {
   data: () => ({
     messages: [
@@ -110,6 +111,9 @@ export default {
       deep: true,
     },
   },
+  created: function () {
+    // console.log(_);
+  },
   updated: function () {},
   methods: {
     scrollToEnd: function () {
@@ -117,7 +121,9 @@ export default {
       container.scrollTop = container.scrollHeight;
     },
     sendMessage() {
-      this.messages.push({ name: "user_name", content: this.message });
+      if (!_.isEmpty(this.message) && this.message !== "\n") {
+        this.messages.push({ name: "user_name", content: this.message });
+      }
       this.message = "";
       this.scrollToEnd();
     },
