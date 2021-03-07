@@ -25,7 +25,7 @@
 export default {
   name: "RightSideBar",
   data: () => ({
-    drawer: false,
+    drawer: null,
     links: [
       ["mdi-inbox-arrow-down", "Inbox"],
       ["mdi-send", "Send"],
