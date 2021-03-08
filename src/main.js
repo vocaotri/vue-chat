@@ -1,5 +1,5 @@
 import Vue from "vue";
-// import lodash from "./plugins/lodash";
+import audio from "./plugins/audio";
 import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
 import router from "./router";
@@ -7,7 +7,7 @@ import router from "./router";
 Vue.config.productionTip = false;
 
 new Vue({
-  // lodash,
+  audio,
   vuetify,
   router,
   render: (h) => h(App),

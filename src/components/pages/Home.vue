@@ -45,19 +45,56 @@
             </v-list-item>
           </template>
         </v-list>
-        <v-card-text class="card-text">
-          <v-textarea
-            sm="6"
-            class="mx-2"
-            label="Typing to chat"
-            rows="5"
-            v-model="message"
-            @keydown.enter.exact="sendMessage"
-          ></v-textarea>
-          <a @click="sendMessage" class="i-con-send">
-            <v-icon sm="6" class="mdi mdi-send"></v-icon>
-          </a>
-        </v-card-text>
+        <v-row>
+          <v-col
+            cols="3"
+            style="position: relative; margin: auto; text-align: center"
+          >
+            <v-row>
+              <v-col cols="4">
+                <button>
+                  <v-icon class="mdi mdi-emoticon-happy-outline"></v-icon>
+                </button>
+              </v-col>
+              <v-col cols="4">
+                <button>
+                  <v-icon class="mdi mdi-file-link"></v-icon>
+                </button>
+              </v-col>
+              <v-col cols="4">
+                <button @click="recordAudio">
+                  <v-icon class="mdi mdi-microphone"></v-icon>
+                </button>
+                <button
+                  type="button"
+                  id="button_stop"
+                  class="btn btn-success"
+                  @click="stop"
+                >
+                  stop
+                </button>
+                <audio id="main-audio" controls src=""></audio>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="9">
+            <v-card-text class="card-text">
+              <v-textarea
+                sm="6"
+                class="mx-2"
+                label="Aa"
+                rows="1"
+                v-model="message"
+                auto-grow
+                @keydown.enter.exact="sendMessage"
+                style="width: 95%; max-height: 250px"
+              ></v-textarea>
+              <a @click="sendMessage" class="i-con-send">
+                <v-icon sm="6" class="mdi mdi-send"></v-icon>
+              </a>
+            </v-card-text>
+          </v-col>
+        </v-row>
       </v-card>
     </v-col>
   </v-row>
@@ -95,6 +132,8 @@ export default {
     ],
     message: "",
     loaddMessage: false,
+    recorder: null,
+    recordedChunks: [],
   }),
   mounted: function () {
     this.scrollToEnd();
@@ -116,6 +155,43 @@ export default {
   },
   updated: function () {},
   methods: {
+    callback(data) {
+      console.log(data);
+    },
+    recordAudio() {
+      var device = navigator.mediaDevices.getUserMedia({ audio: true });
+      device.then((stream) => {
+        // use this!
+        this.recorder = new MediaRecorder(stream);
+        this.recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            this.recordedChunks.push(event.data);
+            this.download();
+          } else {
+            // ...
+          }
+        };
+        this.recorder.start();
+      });
+    },
+    stop() {
+      this.recorder.stop();
+    },
+    download() {
+      var blob = new Blob(this.recordedChunks, {
+        type: "audio/mp3",
+      });
+      var url = URL.createObjectURL(blob);
+      document.getElementById("main-audio").src = url;
+      // audio.setAttribute("src", url);
+      // var a = document.createElement("a");
+      // document.body.appendChild(a);
+      // a.style = "display: none";
+      // a.href = url;
+      // a.download = "test.mp3";
+      // a.click();
+      // window.URL.revokeObjectURL(url);
+    },
     scrollToEnd: function () {
       var container = this.$el.querySelector("#list-chat");
       container.scrollTop = container.scrollHeight;
@@ -123,9 +199,8 @@ export default {
     sendMessage() {
       if (!_.isEmpty(this.message) && this.message !== "\n") {
         this.messages.push({ name: "user_name", content: this.message });
+        this.message = null;
       }
-      this.message = "";
-      this.scrollToEnd();
     },
     scroll() {
       document.getElementById("list-chat").onscroll = () => {
@@ -152,7 +227,7 @@ export default {
 .i-con-send {
   position: absolute;
   right: 0;
-  top: 50%;
+  top: 23%;
   bottom: 0;
   padding: inherit;
   margin: auto;
