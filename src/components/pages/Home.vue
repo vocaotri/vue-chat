@@ -62,23 +62,32 @@
                 </button>
               </v-col>
               <v-col cols="4">
-                <button @click="recordAudio">
+                <button @click="recordAudio" v-if="recorder == null">
                   <v-icon class="mdi mdi-microphone"></v-icon>
                 </button>
                 <button
+                  v-else
                   type="button"
                   id="button_stop"
                   class="btn btn-success"
                   @click="stop"
                 >
-                  stop
+                  <v-icon class="mdi mdi-microphone-off"></v-icon>
                 </button>
-                <audio id="main-audio" controls src=""></audio>
               </v-col>
             </v-row>
           </v-col>
           <v-col cols="9">
             <v-card-text class="card-text">
+              <div class="audio-send" v-show="fileMessageAudio">
+                <audio id="main-audio" controls src=""></audio>
+                <button
+                  style="position: absolute; top: 14%"
+                  @click="closeFileAudio"
+                >
+                  <v-icon class="mdi mdi-close-circle"></v-icon>
+                </button>
+              </div>
               <v-textarea
                 sm="6"
                 class="mx-2"
@@ -131,6 +140,7 @@ export default {
       },
     ],
     message: "",
+    fileMessageAudio: "",
     loaddMessage: false,
     recorder: null,
     recordedChunks: [],
@@ -155,9 +165,6 @@ export default {
   },
   updated: function () {},
   methods: {
-    callback(data) {
-      console.log(data);
-    },
     recordAudio() {
       var device = navigator.mediaDevices.getUserMedia({ audio: true });
       device.then((stream) => {
@@ -176,6 +183,11 @@ export default {
     },
     stop() {
       this.recorder.stop();
+      this.recorder = null;
+    },
+    closeFileAudio() {
+      this.fileMessageAudio = null;
+      document.getElementById("main-audio").src = "";
     },
     download() {
       var blob = new Blob(this.recordedChunks, {
@@ -183,6 +195,7 @@ export default {
       });
       var url = URL.createObjectURL(blob);
       document.getElementById("main-audio").src = url;
+      this.fileMessageAudio = `<audio controls src="${url}"></audio>`;
       // audio.setAttribute("src", url);
       // var a = document.createElement("a");
       // document.body.appendChild(a);
@@ -200,6 +213,14 @@ export default {
       if (!_.isEmpty(this.message) && this.message !== "\n") {
         this.messages.push({ name: "user_name", content: this.message });
         this.message = null;
+      }
+      if (!_.isEmpty(this.fileMessageAudio)) {
+        this.messages.push({
+          name: "user_name",
+          content: this.fileMessageAudio,
+        });
+        this.fileMessageAudio = null;
+        document.getElementById("main-audio").src = "";
       }
     },
     scroll() {
@@ -237,5 +258,35 @@ export default {
 }
 .loading {
   cursor: progress;
+}
+.audio-send {
+  position: absolute;
+  left: 8%;
+  z-index: 1;
+  top: 22%;
+}
+#main-audio {
+  width: 177px;
+  height: 40px;
+}
+@media only screen and (min-width: 768px) {
+  .audio-send {
+    left: 10%;
+    top: 22%;
+  }
+}
+@media only screen and (max-width: 414px) {
+  .audio-send {
+    left: 10%;
+    top: 0%;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .audio-send {
+    left: -4%;
+  }
+  #main-audio {
+    width: 132px;
+  }
 }
 </style>
