@@ -10,6 +10,7 @@
           id="list-chat"
           two-line
           height="350px"
+          style="border-bottom: 1px solid #e8e8e8"
           class="overflow-y-auto"
           :class="loaddMessage ? 'loading' : ''"
         >
@@ -47,21 +48,29 @@
         </v-list>
         <v-row>
           <v-col
-            cols="3"
             style="position: relative; margin: auto; text-align: center"
+            sm="4"
+            cols="12"
+            class="pb-0"
           >
             <v-row>
-              <v-col cols="4">
+              <v-col cols="4" class="pb-0">
                 <button>
                   <v-icon class="mdi mdi-emoticon-happy-outline"></v-icon>
                 </button>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="4" class="pb-0">
                 <button>
-                  <v-icon class="mdi mdi-file-link"></v-icon>
+                  <v-file-input
+                    show-size
+                    label="File input"
+                    accept="image/x-png,image/gif,image/jpeg"
+                    prepend-icon="mdi mdi-file-link"
+                    class="choses-file"
+                  />
                 </button>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="4" class="pb-0">
                 <button @click="recordAudio" v-if="recorder == null">
                   <v-icon class="mdi mdi-microphone"></v-icon>
                 </button>
@@ -77,8 +86,8 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col cols="9">
-            <v-card-text class="card-text">
+          <v-col class="pt-0" sm="8" cols="12">
+            <v-card-text class="card-text xs-pt-0">
               <div class="audio-send" v-show="fileMessageAudio">
                 <audio id="main-audio" controls src=""></audio>
                 <button
@@ -111,6 +120,7 @@
 
 <script>
 import _ from "lodash";
+import "@/assets/css/chat-box.css";
 export default {
   data: () => ({
     messages: [
@@ -160,15 +170,12 @@ export default {
       deep: true,
     },
   },
-  created: function () {
-    // console.log(_);
-  },
+  created: function () {},
   updated: function () {},
   methods: {
     recordAudio() {
       var device = navigator.mediaDevices.getUserMedia({ audio: true });
       device.then((stream) => {
-        // use this!
         this.recorder = new MediaRecorder(stream);
         this.recorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
@@ -196,24 +203,12 @@ export default {
       var url = URL.createObjectURL(blob);
       document.getElementById("main-audio").src = url;
       this.fileMessageAudio = `<audio controls src="${url}"></audio>`;
-      // audio.setAttribute("src", url);
-      // var a = document.createElement("a");
-      // document.body.appendChild(a);
-      // a.style = "display: none";
-      // a.href = url;
-      // a.download = "test.mp3";
-      // a.click();
-      // window.URL.revokeObjectURL(url);
     },
     scrollToEnd: function () {
       var container = this.$el.querySelector("#list-chat");
       container.scrollTop = container.scrollHeight;
     },
     sendMessage() {
-      if (!_.isEmpty(this.message) && this.message !== "\n") {
-        this.messages.push({ name: "user_name", content: this.message });
-        this.message = null;
-      }
       if (!_.isEmpty(this.fileMessageAudio)) {
         this.messages.push({
           name: "user_name",
@@ -221,6 +216,10 @@ export default {
         });
         this.fileMessageAudio = null;
         document.getElementById("main-audio").src = "";
+      }
+      if (!_.isEmpty(this.message) && this.message !== "\n") {
+        this.messages.push({ name: "user_name", content: this.message });
+        this.message = null;
       }
     },
     scroll() {
@@ -237,56 +236,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.pre-formatted {
-  white-space: pre;
-}
-.card-text {
-  position: relative;
-}
-.i-con-send {
-  position: absolute;
-  right: 0;
-  top: 23%;
-  bottom: 0;
-  padding: inherit;
-  margin: auto;
-}
-.m-auto {
-  margin: auto;
-}
-.loading {
-  cursor: progress;
-}
-.audio-send {
-  position: absolute;
-  left: 8%;
-  z-index: 1;
-  top: 22%;
-}
-#main-audio {
-  width: 177px;
-  height: 40px;
-}
-@media only screen and (min-width: 768px) {
-  .audio-send {
-    left: 10%;
-    top: 22%;
-  }
-}
-@media only screen and (max-width: 414px) {
-  .audio-send {
-    left: 10%;
-    top: 0%;
-  }
-}
-@media only screen and (max-width: 320px) {
-  .audio-send {
-    left: -4%;
-  }
-  #main-audio {
-    width: 132px;
-  }
-}
-</style>

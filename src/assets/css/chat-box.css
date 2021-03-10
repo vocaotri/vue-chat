@@ -1,0 +1,67 @@
+.pre-formatted {
+  white-space: pre;
+}
+.card-text {
+  position: relative;
+}
+.i-con-send {
+  position: absolute;
+  right: 0;
+  top: 23%;
+  bottom: 0;
+  padding: inherit;
+  margin: auto;
+}
+.m-auto {
+  margin: auto;
+}
+.loading {
+  cursor: progress;
+}
+.audio-send {
+  position: absolute;
+  left: 8%;
+  z-index: 1;
+  top: 22%;
+}
+.choses-file {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  z-index: 2;
+}
+.v-input__prepend-outer {
+  margin-top: 0;
+}
+#main-audio {
+  width: 177px;
+  height: 40px;
+}
+@media only screen and (min-width: 768px) {
+  .audio-send {
+    left: 10%;
+    top: 22%;
+  }
+}
+@media only screen and (max-width: 414px) {
+  .audio-send {
+    left: 10%;
+    top: 0%;
+  }
+  .choses-file {
+    margin-left: 5%;
+  }
+  .xs-pt-0 {
+    padding-top: 0;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .audio-send {
+    left: -4%;
+  }
+  #main-audio {
+    width: 132px;
+  }
+  .choses-file {
+    margin-left: 7%;
+  }
+}
