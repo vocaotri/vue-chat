@@ -54,11 +54,7 @@
             class="pb-0"
           >
             <v-row>
-              <v-col cols="4" class="pb-0">
-                <button>
-                  <v-icon class="mdi mdi-emoticon-happy-outline"></v-icon>
-                </button>
-              </v-col>
+              <v-col cols="4" class="pb-0"> <Emoij /> </v-col>
               <v-col cols="4" class="pb-0">
                 <button>
                   <v-file-input
@@ -121,6 +117,7 @@
 <script>
 import _ from "lodash";
 import "@/assets/css/chat-box.css";
+import Emoij from "@/components/pages/Emoij";
 export default {
   data: () => ({
     messages: [
@@ -158,6 +155,9 @@ export default {
   mounted: function () {
     this.scrollToEnd();
     this.scroll();
+  },
+  components: {
+    Emoij,
   },
   watch: {
     messages: {

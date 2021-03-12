@@ -1,0 +1,12 @@
+.popup-emoij {
+  position: absolute !important;
+  top: -510%;
+  z-index: 3;
+}
+.box-emoij {
+  overflow-y: auto;
+  max-height: 170px;
+}
+.emoij-item {
+  cursor: pointer;
+}
