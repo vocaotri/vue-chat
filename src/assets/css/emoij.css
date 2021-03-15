@@ -4,8 +4,8 @@
   z-index: 3;
 }
 .box-emoij {
-  overflow-y: auto;
-  max-height: 170px;
+    overflow-x: hidden;
+    max-height: 170px;
 }
 .emoij-item {
   cursor: pointer;

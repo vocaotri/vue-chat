@@ -15,12 +15,20 @@
         <v-row id="box-emoij" class="box-emoij">
           <template v-for="(emoij, index) in emoijs">
             <v-col cols="1" :key="index" class="emoij-item">
-              <button :title="emoij.name">
+              <button :title="emoij.name" @click="selectEmoij(emoij.char)">
                 {{ emoij.char }}
               </button>
             </v-col>
           </template>
         </v-row>
+        <v-img
+          v-show="loadEmoij"
+          alt="loading message"
+          src="@/assets/gif/loading-message.gif"
+          width="25px"
+          height="25px"
+          class="m-auto"
+        ></v-img>
       </v-card-text>
 
       <v-divider></v-divider>
@@ -47,29 +55,39 @@ export default {
       showEmo: false,
       keyword: "",
       limit: 50,
+      loadEmoij: false,
+      page: 1,
+      limitPage: Number,
     };
   },
   computed: {
     urlEmoij() {
-      return `https://api-emoji.herokuapp.com/emojis?limit=${this.limit}&name=${this.keyword}`;
+      return `https://api-emoji.herokuapp.com/emojis?limit=${this.limit}&name=${this.keyword}&page=${this.page}`;
     },
   },
   watch: {
     keyword: _.debounce(function () {
+      this.page = 1;
+      this.emoijs = [];
       var url = this.urlEmoij;
       this.fetchEmoij(url);
     }, 300),
   },
   methods: {
-    openEmoij() {
+    async openEmoij() {
       this.showEmo = true;
-      this.fetchEmoij(this.urlEmoij);
+      if (_.isEmpty(this.emoijs)) await this.fetchEmoij(this.urlEmoij);
     },
     fetchEmoij(url) {
+      this.loadEmoij = true;
       fetch(url)
         .then((res) => {
           res.json().then((data) => {
-            this.emoijs = data.data;
+            if (_.isEmpty(this.emoijs)) this.emoijs = data.data;
+            else this.emoijs = [...this.emoijs, ...data.data];
+            this.loadEmoij = false;
+            this.limitPage = data.totalPage;
+            this.scroll();
           });
         })
         .catch((error) => {
@@ -82,15 +100,22 @@ export default {
     scroll() {
       document.getElementById("box-emoij").onscroll = () => {
         var box = document.getElementById("box-emoij");
-        console.log(box.scrollTop);
-        // if (document.getElementById("box-emoij").scrollTop === 0) {
-        // this.loaddMessage = true;
-        // var _this = this;
-        // setTimeout(function () {
-        //   _this.loaddMessage = false;
-        // }, 1000);
-        // }
+        if (
+          box.scrollTop + box.offsetHeight === box.scrollHeight &&
+          this.page < this.limitPage
+        ) {
+          this.page++;
+          this.fetchEmoij(this.urlEmoij);
+          this.loadEmoij = true;
+          var _this = this;
+          setTimeout(function () {
+            _this.loadEmoij = false;
+          }, 1000);
+        }
       };
+    },
+    selectEmoij(emoij) {
+      console.log(emoij);
     },
   },
 };
