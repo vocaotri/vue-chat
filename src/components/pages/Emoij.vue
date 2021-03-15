@@ -115,7 +115,7 @@ export default {
       };
     },
     selectEmoij(emoij) {
-      console.log(emoij);
+      this.$emit("select-emoij", emoij);
     },
   },
 };

@@ -54,7 +54,9 @@
             class="pb-0"
           >
             <v-row>
-              <v-col cols="4" class="pb-0"> <Emoij /> </v-col>
+              <v-col cols="4" class="pb-0">
+                <Emoij v-on:select-emoij="getEmoij" />
+              </v-col>
               <v-col cols="4" class="pb-0">
                 <button>
                   <v-file-input
@@ -207,6 +209,9 @@ export default {
     scrollToEnd: function () {
       var container = this.$el.querySelector("#list-chat");
       container.scrollTop = container.scrollHeight;
+    },
+    getEmoij(emoij) {
+      this.message += emoij;
     },
     sendMessage() {
       if (!_.isEmpty(this.fileMessageAudio)) {
